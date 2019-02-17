@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QdnAzureStorageLibrary;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,11 @@ namespace storage
     {
         static void Main(string[] args)
         {
+
+            BlobStorage.Setup();
+          //  BlobStorage.UploadFile(@"C:\projects\azuremvc2\azuremvc\imageicon.png", "imagesstoresd", "xyz2.png");
+            BlobStorage.GetList("imagesstoresd");
+
         }
-    }
+}
 }

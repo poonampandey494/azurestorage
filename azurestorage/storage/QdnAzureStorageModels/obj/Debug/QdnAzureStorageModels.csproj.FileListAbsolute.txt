@@ -1,0 +1,5 @@
+C:\projects\azurestorages\azurestorage\storage\QdnAzureStorageModels\bin\Debug\QdnAzureStorageModels.dll
+C:\projects\azurestorages\azurestorage\storage\QdnAzureStorageModels\bin\Debug\QdnAzureStorageModels.pdb
+C:\projects\azurestorages\azurestorage\storage\QdnAzureStorageModels\obj\Debug\QdnAzureStorageModels.dll
+C:\projects\azurestorages\azurestorage\storage\QdnAzureStorageModels\obj\Debug\QdnAzureStorageModels.pdb
+C:\projects\azurestorages\azurestorage\storage\QdnAzureStorageModels\obj\Debug\QdnAzureStorageModels.csprojResolveAssemblyReference.cache
