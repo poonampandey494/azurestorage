@@ -16,6 +16,11 @@ namespace storage
           //  BlobStorage.UploadFile(@"C:\projects\azuremvc2\azuremvc\imageicon.png", "imagesstoresd", "xyz2.png");
             BlobStorage.GetList("imagesstoresd");
 
+            BlobStorage.CreateSharedAccessPolicy("imagesstoresd","checkaccess");
+            var str= BlobStorage.GetSharedAccessPolicyToken("imagesstoresd", "checkaccess");
+            Console.WriteLine(str);
+            Console.ReadLine();
+
         }
-}
+    }
 }

@@ -7,6 +7,7 @@ using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.Azure;
 using QdnAzureStorageModels;
+using Microsoft.WindowsAzure.Storage.Shared.Protocol;
 
 namespace QdnAzureStorageLibrary
 {
@@ -23,7 +24,43 @@ namespace QdnAzureStorageLibrary
                 );
         }
 
-      public static void UploadFile(string filePath, string storagePath, string fileName)
+
+        public static void CreateSharedAccessPolicy(string storagePath,string policyName)
+        {
+            var blobClient = cloudStorageAccount.CreateCloudBlobClient();
+            var container = blobClient.GetContainerReference(storagePath);
+            container.CreateIfNotExists(BlobContainerPublicAccessType.Blob);
+            var permissions = container.GetPermissions();
+
+            
+            //Check if policyName already  exists
+            var sharedAccessPolicies = permissions.SharedAccessPolicies.SingleOrDefault(x => x.Key == policyName);
+            if (sharedAccessPolicies.Key == null)
+            {
+                var sharedPolicy = new SharedAccessBlobPolicy()
+                {
+                    SharedAccessStartTime = DateTimeOffset.UtcNow,
+                    SharedAccessExpiryTime = DateTimeOffset.UtcNow.AddHours(72),
+                    Permissions = SharedAccessBlobPermissions.Add | SharedAccessBlobPermissions.Write | SharedAccessBlobPermissions.List | SharedAccessBlobPermissions.Read
+                };
+                permissions.SharedAccessPolicies.Add(policyName, sharedPolicy);
+                container.SetPermissions(permissions);
+            }
+
+        }
+
+
+
+        public static string GetSharedAccessPolicyToken(string storagePath, string policyName)
+        {
+            var blobClient = cloudStorageAccount.CreateCloudBlobClient();
+            var container = blobClient.GetContainerReference(storagePath);
+            container.CreateIfNotExists(BlobContainerPublicAccessType.Blob);
+            var permissions = container.GetPermissions();
+            return container.GetSharedAccessSignature(null, policyName);
+        }
+
+        public static void UploadFile(string filePath, string storagePath, string fileName)
         {
             
 
@@ -54,7 +91,22 @@ namespace QdnAzureStorageLibrary
 
         }
 
-      public static  List<BlobModel> GetList(string storagePath)
+
+        public void AddCrossRules(string storagePath)
+        {
+            var blobClient = cloudStorageAccount.CreateCloudBlobClient();
+         var serviceProperties = blobClient.GetServiceProperties();
+            var container = blobClient.GetContainerReference(storagePath);
+          //  var serviceProperties = container.;
+            var cors = new CorsRule();
+            cors.AllowedOrigins.Add("*");
+            cors.AllowedMethods = CorsHttpMethods.Get;
+            cors.MaxAgeInSeconds = 900;
+           // serviceProperties.
+            serviceProperties.Cors.CorsRules.Add(cors);
+           // blobClient.SetServiceProperties(serviceProperties);
+        }
+        public static  List<BlobModel> GetList(string storagePath)
         {
             var blobClient = cloudStorageAccount.CreateCloudBlobClient();
 
@@ -63,8 +115,10 @@ namespace QdnAzureStorageLibrary
 
             var lst = container.ListBlobs().ToList();
             List<BlobModel> b = new List<BlobModel>();
+
+
             foreach(var item in lst)
-            {
+            { 
                 b.Add(new BlobModel { Name = ((CloudBlob)item).Name, BlobUri = item.Uri });
             }
                 
